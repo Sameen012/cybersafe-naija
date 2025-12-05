@@ -1,7 +1,17 @@
 import { Op, fn, col, literal } from 'sequelize';
 import { Report, Comment, Alert, sequelize } from '../models/index.js';
 
-const riskLevelFromCount = (count) => (count >= 3 ? 'High' : 'Low');
+const velocityToThreatScore = (count) => {
+  if (count <= 0) return 5;
+  if (count >= 5) return 100;
+  return Math.min(100, count * 20);
+};
+
+const scoreToThreatLevel = (score) => {
+  if (score >= 70) return 'CRITICAL/BLOCK IMMEDIATELY';
+  if (score >= 30) return 'Suspicious';
+  return 'Safe';
+};
 
 export const searchScam = async (req, res) => {
   const query = req.query.q?.trim();
@@ -20,6 +30,22 @@ export const searchScam = async (req, res) => {
       order: [['reportedAt', 'DESC']]
     });
 
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const velocityCount = await Report.count({
+      where: {
+        scammerIdentity: {
+          [Op.like]: `%${query}%`
+        },
+        reportedAt: {
+          [Op.gte]: twentyFourHoursAgo
+        }
+      }
+    });
+
+    const threatScore = velocityToThreatScore(velocityCount);
+    const threatLevel = scoreToThreatLevel(threatScore);
+
     const reportIds = reports.map((report) => report.id);
 
     const comments = reportIds.length
@@ -33,7 +59,9 @@ export const searchScam = async (req, res) => {
     return res.json({
       query,
       reportCount: reports.length,
-      riskLevel: riskLevelFromCount(reports.length),
+      velocity24h: velocityCount,
+      threatScore,
+      threatLevel,
       recentComments: comments
     });
   } catch (error) {

@@ -1,46 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ShieldAlert, ShieldCheck, Lock, Smartphone, Globe, CreditCard } from 'lucide-react';
 
+// RUTHLESS UPGRADE: Hardened Security Protocols
 const checklistItems = [
   {
-    id: '2fa-whatsapp',
-    title: 'Enable 2FA on WhatsApp',
-    guidance: 'Go to Settings > Account > Two-Step Verification. Set a six-digit PIN and add a recovery email.'
+    id: 'dns-filtering',
+    icon: Globe,
+    title: 'Deploy DNS Filtering',
+    guidance: 'Configure NextDNS or Quad9 on your mobile private DNS settings. This ruthlessly blocks known malicious domains at the network level before they load.'
   },
   {
-    id: 'forwarding',
-    title: 'Check for forwarded SMS',
-    guidance: 'Dial *#62# to see if your calls or SMS are routed elsewhere. Contact your network to disable anything suspicious.'
+    id: 'financial-airgap',
+    icon: CreditCard,
+    title: 'Financial Segmentation',
+    guidance: 'Never keep life savings in an account linked to a debit card. Use a separate "spending-only" wallet for daily transactions to limit blast radius.'
   },
   {
-    id: 'bvn-safety',
-    title: 'BVN safety reminder',
-    guidance: 'Never share your BVN on WhatsApp or random online forms. Banks will not ask for it via DM.'
+    id: 'sim-lock',
+    icon: Smartphone,
+    title: 'Physical SIM Lock',
+    guidance: 'Set a PIN on your physical SIM card settings. If your phone is stolen, the thief cannot put your SIM in another phone to intercept OTPs.'
   },
   {
-    id: 'permissions',
-    title: 'Audit app permissions',
-    guidance: 'Open phone settings. Revoke Contacts, SMS or Microphone access from apps that do not need it.'
+    id: 'burner-identity',
+    icon: Lock,
+    title: 'Burner Identity Protocol',
+    guidance: 'Use email aliases (Firefox Relay/iCloud) for random signups. Never expose your primary banking email to e-commerce sites.'
   },
   {
-    id: 'password-manager',
-    title: 'Use a password vault',
-    guidance: 'Adopt a password manager (like 1Password or Bitwarden) so every service has a unique, long passphrase.'
-  },
-  {
-    id: 'bank-alerts',
-    title: 'Turn on bank alerts',
-    guidance: 'Enable in-app/device push and email alerts for transactions so you react within seconds.'
-  },
-  {
-    id: 'contact-review',
-    title: 'Review emergency contacts',
-    guidance: 'Save your bank hotlines and EFCC Eagle Eye contact so you can escalate quickly.'
+    id: 'app-audit',
+    icon: ShieldAlert,
+    title: 'Ruthless App Audit',
+    guidance: 'Delete any app you haven\'t used in 3 months. Every app is a potential entry point. If it is not essential, it is a liability.'
   }
 ];
 
 const ProtectionChecklist = () => {
-  const [completed, setCompleted] = useState(() => new Set());
+  // Load state from localStorage to persist progress
+  const [completed, setCompleted] = useState(() => {
+    const saved = localStorage.getItem('csn_checklist_progress');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
+
   const score = Math.round((completed.size / checklistItems.length) * 100);
+
+  useEffect(() => {
+    localStorage.setItem('csn_checklist_progress', JSON.stringify([...completed]));
+  }, [completed]);
 
   const toggleItem = (id) => {
     setCompleted((prev) => {
@@ -55,44 +61,94 @@ const ProtectionChecklist = () => {
   };
 
   return (
-    <section className="mx-auto flex max-w-4xl flex-col gap-10 pb-20">
-      <div className="sticky top-0 z-10 rounded-2xl border border-brand-green/40 bg-white/95 p-5 shadow-md backdrop-blur">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-green">Safety Score</p>
-        <div className="mt-3 h-3 w-full rounded-full bg-brand-light">
+    // RESPONSIVE CONTAINER:
+    // 'px-4' for mobile padding, 'sm:px-6' for tablets.
+    // 'pb-24' ensures content isn't hidden behind bottom navigation on mobile.
+    <section className="mx-auto flex max-w-5xl flex-col gap-8 px-4 pb-24 sm:px-6">
+      
+      {/* RESPONSIVE SCORECARD: Sticky top so it's always visible on mobile scroll */}
+      <div className="sticky top-4 z-20 rounded-2xl border border-brand-green/40 bg-white/95 p-5 shadow-lg backdrop-blur transition-all">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-green">Security Hardening</p>
+          <span className={`text-sm font-bold ${score === 100 ? 'text-brand-green' : 'text-slate-500'}`}>
+            {score}% Secure
+          </span>
+        </div>
+        
+        {/* Progress Bar */}
+        <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-slate-100">
           <div
-            className="h-full rounded-full bg-green-700 transition-all"
+            className={`h-full transition-all duration-500 ease-out ${
+              score < 50 ? 'bg-red-500' : score < 100 ? 'bg-yellow-500' : 'bg-brand-green'
+            }`}
             style={{ width: `${score}%` }}
-            aria-label={`${score} percent complete`}
           />
         </div>
-        <p className="mt-2 text-sm font-semibold text-slate-600">You are {score}% safe.</p>
+        <p className="mt-2 text-xs text-slate-500 sm:text-sm">
+          {score === 100 
+            ? "You are a hard target. Well done." 
+            : "You are vulnerable. Close the gaps."}
+        </p>
       </div>
 
-      <header className="space-y-3">
-        <h1 className="text-4xl font-black text-brand-dark">Protection Checklist</h1>
-        <p className="text-lg text-slate-600">
-          Tap each box as you harden your accounts. Your goal is to reach 100% so scammers hit a dead end.
+      <header className="space-y-3 pt-2">
+        {/* RESPONSIVE TYPOGRAPHY: text-3xl on mobile, text-4xl on desktop */}
+        <h1 className="text-3xl font-black text-brand-dark md:text-4xl">Paranoid Checklist</h1>
+        <p className="text-base text-slate-600 md:text-lg">
+          Passive defense is failure. Actively harden your digital life against attacks.
         </p>
       </header>
 
-      <div className="space-y-6">
-        {checklistItems.map((item) => (
-          <article key={item.id} className="rounded-3xl border border-brand-green/30 bg-white p-6 shadow-sm">
-            <label className="flex cursor-pointer items-start gap-4">
-              <input
-                type="checkbox"
-                checked={completed.has(item.id)}
-                onChange={() => toggleItem(item.id)}
-                className="mt-1 h-5 w-5 rounded border-brand-green text-green-700 focus:ring-green-700"
-              />
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-green">Checklist</p>
-                <h2 className="mt-1 text-2xl font-bold text-brand-dark">{item.title}</h2>
-                <p className="mt-3 text-base text-slate-600">{item.guidance}</p>
-              </div>
-            </label>
-          </article>
-        ))}
+      {/* RESPONSIVE GRID:
+          - Default (Mobile): 1 column (stack)
+          - md (Tablets): 2 columns
+          - Gap changes for better spacing on larger screens
+      */}
+      <div className="grid gap-4 md:grid-cols-2 md:gap-6">
+        {checklistItems.map((item) => {
+          const isChecked = completed.has(item.id);
+          const Icon = item.icon;
+
+          return (
+            <article 
+              key={item.id} 
+              className={`group relative overflow-hidden rounded-3xl border p-5 transition-all duration-300 ${
+                isChecked 
+                  ? 'border-brand-green bg-brand-light shadow-none' 
+                  : 'border-slate-200 bg-white shadow-sm hover:border-brand-green/50 hover:shadow-md'
+              }`}
+            >
+              <label className="flex cursor-pointer items-start gap-4">
+                {/* Custom Checkbox for better touch targets */}
+                <div className="relative pt-1">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => toggleItem(item.id)}
+                    className="peer sr-only" // Hide default checkbox
+                  />
+                  <div className={`flex h-6 w-6 items-center justify-ZXcenter rounded-full border-2 transition-colors ${
+                    isChecked ? 'border-brand-green bg-brand-green text-white' : 'border-slate-300 bg-transparent'
+                  }`}>
+                    {isChecked && <ShieldCheck size={14} />}
+                  </div>
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <Icon size={18} className={isChecked ? 'text-brand-dark' : 'text-slate-400'} />
+                    <h2 className={`text-lg font-bold ${isChecked ? 'text-brand-dark' : 'text-slate-800'}`}>
+                      {item.title}
+                    </h2>
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                    {item.guidance}
+                  </p>
+                </div>
+              </label>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

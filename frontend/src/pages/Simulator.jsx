@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const initialMessages = [
   {
     id: 'intro-1',
     author: 'bot',
-    text: '👋🏾 Hello dear! I am Mrs. Blessing from the Federal Women Empowerment Office.',
-    time: '08:45'
+    text: '🚨 This is Inspector Musa from EFCC Cybercrime Response Team.',
+    time: '09:12'
   },
   {
     id: 'intro-2',
     author: 'bot',
-    text: 'We are giving ₦200,000 cash grants this week. I can fast-track your name if you respond quickly.',
-    time: '08:45'
+    text: 'Your BVN is tied to a laundering ring. Confirm your identity within 15 seconds or your accounts go into immediate freeze.',
+    time: '09:12'
   }
 ];
 
@@ -19,6 +19,7 @@ const Simulator = () => {
   const [messages, setMessages] = useState(initialMessages);
   const [stage, setStage] = useState('intro');
   const [result, setResult] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(15);
 
   const pushMessage = (author, text) => {
     setMessages((prev) => [
@@ -32,69 +33,89 @@ const Simulator = () => {
     ]);
   };
 
-  const resolveResult = (status) => {
+  const resolveResult = (status, customDetail) => {
     if (status === 'safe') {
       setResult({
         title: 'SUCCESS: You are safe ✅',
-        detail: 'Blocking suspicious contacts protects your savings and helps us warn others.',
+        detail:
+          customDetail ||
+          'Zero-trust pays off. You verified the caller, cut the session, and kept your naira plus crypto untouched.',
         tone: 'success'
       });
     } else {
       setResult({
         title: 'GAME OVER: You were scammed ⚠️',
-        detail: 'Never send “processing fees” for grants. Real agencies do not request transfers via WhatsApp.',
+        detail:
+          customDetail ||
+          'Countdown intimidation made you reveal secrets. Law enforcement will never demand OTPs or seeds on WhatsApp.',
         tone: 'danger'
       });
     }
   };
 
-  const handleChoice = (action) => {
-    if (stage === 'intro') {
-      if (action === 'interested') {
-        pushMessage('user', "I'm interested. How do I receive it?");
-        pushMessage(
-          'bot',
-          'Wonderful! Kindly send a ₦5,000 processing fee to account 123456789 so I can release your ₦200,000 grant today.'
-        );
-        setStage('fee');
-      }
-      if (action === 'block') {
-        pushMessage('user', 'This sounds suspicious. I will block you.');
-        pushMessage('system', 'You blocked Mrs. Blessing and forwarded the chat to report.gov.ng.');
-        setStage('end');
-        resolveResult('safe');
-      }
-    } else if (stage === 'fee') {
-      if (action === 'pay') {
-        pushMessage('user', 'Okay, I will pay the ₦5,000 fee now.');
-        pushMessage('bot', 'Please hurry! Many Nigerians are begging for this opportunity. Send proof once done.');
-        pushMessage('system', 'Mrs. Blessing disappeared after receiving your transfer.');
-        setStage('end');
-        resolveResult('scammed');
-      }
-      if (action === 'report') {
-        pushMessage('user', 'Nope, this is fake. I am reporting and blocking you.');
-        pushMessage('system', 'You reported the chat to CyberSafe Naija hotlines.');
-        setStage('end');
-        resolveResult('safe');
-      }
-    }
+  const optionConfig = {
+    intro: [
+      { id: 'comply', label: 'Comply immediately' },
+      { id: 'verify', label: 'Request badge & call EFCC HQ' }
+    ],
+    crypto: [
+      { id: 'connect', label: 'Connect wallet to “emergency” portal' },
+      { id: 'cold-power', label: 'Cold power down & call exchange' }
+    ]
   };
 
-  const currentOptions = () => {
+  const activeOptions = optionConfig[stage] || [];
+
+  useEffect(() => {
+    if (stage === 'end' || activeOptions.length === 0) return;
+    setTimeLeft(15);
+  }, [stage, activeOptions.length]);
+
+  useEffect(() => {
+    if (stage === 'end' || activeOptions.length === 0) return;
+    if (timeLeft <= 0) {
+      pushMessage('system', '⏱️ You froze for too long and the attackers escalated.');
+      setStage('end');
+      resolveResult(
+        'scammed',
+        'Hesitation gave the impersonator room to social-engineer your telecom provider and hijack your accounts.'
+      );
+      return;
+    }
+    const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [stage, timeLeft, activeOptions.length]);
+
+  const handleChoice = (action) => {
     if (stage === 'intro') {
-      return [
-        { id: 'interested', label: "I'm interested" },
-        { id: 'block', label: 'Block Mrs. Blessing' }
-      ];
+      if (action === 'comply') {
+        pushMessage('user', 'Okay inspector, what do you need?');
+        pushMessage('bot', 'Send the OTP you just received. You have 10 seconds before we send patrols.');
+        pushMessage('system', 'EFCC impersonator cloned your SIM and emptied your main account.');
+        setStage('end');
+        resolveResult('scammed', 'EFCC does not run investigations via WhatsApp countdowns or request OTPs.');
+      }
+      if (action === 'verify') {
+        pushMessage('user', 'Share your badge number. I will call EFCC HQ myself.');
+        pushMessage('bot', 'No time for bureaucracy. ChainPulse Security already sees a crypto drain in progress.');
+        pushMessage('system', 'ChainPulse Bot: Wallet 0x09fa... flagged for live draining. Act now!');
+        setStage('crypto');
+      }
+    } else if (stage === 'crypto') {
+      if (action === 'connect') {
+        pushMessage('user', 'Connecting now, please stop the drain!');
+        pushMessage('bot', 'Upload your seed phrase to authenticate the emergency patch.');
+        pushMessage('system', '11 seconds later, the attacker transferred your entire USDT balance.');
+        setStage('end');
+        resolveResult('scammed', 'No incident responder needs your seed phrase. You just handed them total control.');
+      }
+      if (action === 'cold-power') {
+        pushMessage('user', 'Powering down and calling my exchange fraud desk right now.');
+        pushMessage('system', 'Exchange froze withdrawals and EFCC confirmed the caller was fake.');
+        setStage('end');
+        resolveResult('safe');
+      }
     }
-    if (stage === 'fee') {
-      return [
-        { id: 'pay', label: 'Pay ₦5,000 fee' },
-        { id: 'report', label: 'Report & Block' }
-      ];
-    }
-    return [];
   };
 
   const bubbleStyles = (author) => {
@@ -130,9 +151,9 @@ const Simulator = () => {
           ))}
         </div>
 
-        {currentOptions().length > 0 && (
+        {activeOptions.length > 0 && (
           <div className="mt-4 flex flex-col gap-3">
-            {currentOptions().map((option) => (
+            {activeOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => handleChoice(option.id)}
@@ -141,6 +162,10 @@ const Simulator = () => {
                 {option.label}
               </button>
             ))}
+            <div className="flex items-center justify-between rounded-full bg-black/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white">
+              <span>Panic timer</span>
+              <span>{timeLeft}s</span>
+            </div>
           </div>
         )}
       </div>

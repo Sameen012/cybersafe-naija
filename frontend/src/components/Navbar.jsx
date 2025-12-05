@@ -31,6 +31,16 @@ const Navbar = () => {
 
   const closeMenu = () => setIsMenuOpen(false);
 
+  // RUTHLESS FIX: This function forces the dropdown to close immediately
+  const handleDropdownClick = (e) => {
+    closeMenu(); // Close mobile menu if open
+    // Find the parent <details> tag and force it to close
+    const detailsElement = e.currentTarget.closest('details');
+    if (detailsElement) {
+      detailsElement.removeAttribute('open');
+    }
+  };
+
   return (
     <header className="border-b border-brand-green/30 bg-white/95 shadow-sm backdrop-blur">
       <div className="mx-auto w-full max-w-6xl px-4 py-4">
@@ -84,6 +94,8 @@ const Navbar = () => {
                 {link.label}
               </NavLink>
             ))}
+            
+            {/* Resources Dropdown */}
             <details className="group relative lg:static">
               <summary className="cursor-pointer list-none rounded-full px-3 py-1 text-slate-600 transition-colors hover:bg-brand-light">
                 Resources
@@ -93,7 +105,7 @@ const Navbar = () => {
                   <NavLink
                     key={resource.to}
                     to={resource.to}
-                    onClick={closeMenu}
+                    onClick={handleDropdownClick} // Updated Handler attached here
                     className={({ isActive }) =>
                       `block px-4 py-2 text-sm ${
                         isActive ? 'bg-brand-green/10 text-brand-green' : 'text-slate-700 hover:bg-brand-light'
