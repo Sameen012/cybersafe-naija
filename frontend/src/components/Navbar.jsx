@@ -42,7 +42,8 @@ const Navbar = () => {
   };
 
   return (
-    <header className="border-b border-brand-green/30 bg-white/95 shadow-sm backdrop-blur">
+    // FIXED: Added 'relative z-50' so dropdowns float ABOVE everything else
+    <header className="relative z-50 border-b border-brand-green/30 bg-white/95 shadow-sm backdrop-blur">
       <div className="mx-auto w-full max-w-6xl px-4 py-4">
         <div className="flex items-center justify-between">
           <NavLink to="/" className="flex items-center gap-2 text-2xl font-bold text-brand-dark">
@@ -56,8 +57,8 @@ const Navbar = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search anything"
-                className="w-32 border-none bg-transparent text-sm text-brand-dark outline-none"
+                placeholder="Search"
+                className="w-24 border-none bg-transparent text-sm text-brand-dark outline-none"
               />
               <button type="submit" className="rounded-full bg-green-700 px-3 py-1 text-xs font-semibold text-white">
                 Go
@@ -100,12 +101,12 @@ const Navbar = () => {
               <summary className="cursor-pointer list-none rounded-full px-3 py-1 text-slate-600 transition-colors hover:bg-brand-light">
                 Resources
               </summary>
-              <div className="mt-2 rounded-2xl border border-brand-green/20 bg-white py-2 text-left shadow-lg lg:absolute lg:right-0 lg:z-20 lg:w-56">
+              <div className="mt-2 rounded-2xl border border-brand-green/20 bg-white py-2 text-left shadow-lg lg:absolute lg:right-0 lg:z-50 lg:w-56">
                 {resourceLinks.map((resource) => (
                   <NavLink
                     key={resource.to}
                     to={resource.to}
-                    onClick={handleDropdownClick} // Updated Handler attached here
+                    onClick={handleDropdownClick} // Attached the closer function here
                     className={({ isActive }) =>
                       `block px-4 py-2 text-sm ${
                         isActive ? 'bg-brand-green/10 text-brand-green' : 'text-slate-700 hover:bg-brand-light'
@@ -128,7 +129,7 @@ const Navbar = () => {
               type="text"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search phone number, keyword, handle"
+              placeholder="Search phone number, keyword..."
               className="flex-1 border-none bg-transparent text-sm text-brand-dark outline-none"
             />
             <button type="submit" className="rounded-full bg-green-700 px-4 py-1 text-white">
