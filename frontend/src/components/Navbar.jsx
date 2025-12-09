@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { ShieldCheck, Menu, X, Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { ShieldCheck, Menu, X, Search, ChevronRight } from 'lucide-react';
 
 const links = [
   { to: '/', label: 'Home' },
@@ -20,6 +20,21 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Close menu automatically when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
+
+  // Lock body scroll when menu is open (iPhone Fix)
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isMenuOpen]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -29,116 +44,107 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  const closeMenu = () => setIsMenuOpen(false);
-
-  // RUTHLESS FIX: This function forces the dropdown to close immediately
-  const handleDropdownClick = (e) => {
-    closeMenu(); // Close mobile menu if open
-    // Find the parent <details> tag and force it to close
-    const detailsElement = e.currentTarget.closest('details');
-    if (detailsElement) {
-      detailsElement.removeAttribute('open');
-    }
-  };
-
   return (
-    // FIXED: Added 'relative z-50' so dropdowns float ABOVE everything else
-    <header className="relative z-50 border-b border-brand-green/30 bg-white/95 shadow-sm backdrop-blur">
-      <div className="mx-auto w-full max-w-6xl px-4 py-4">
-        <div className="flex items-center justify-between">
-          <NavLink to="/" className="flex items-center gap-2 text-2xl font-bold text-brand-dark">
-            <ShieldCheck className="h-7 w-7 text-brand-green" aria-hidden />
-            <span>CyberSafe Naija</span>
+    <>
+      <header className="sticky top-0 z-40 border-b border-brand-green/10 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4">
+          <NavLink to="/" className="flex items-center gap-2 text-xl font-black tracking-tight text-brand-dark">
+            <ShieldCheck className="h-7 w-7 text-brand-green" strokeWidth={2.5} />
+            <span>CyberSafe</span>
           </NavLink>
-          <div className="flex items-center gap-3 lg:hidden">
-            <form onSubmit={handleSearch} className="flex items-center gap-2 rounded-full border border-brand-green/40 bg-white px-3 py-1 text-sm shadow-sm">
-              <Search className="h-4 w-4 text-brand-green" aria-hidden />
+
+          {/* Desktop Nav */}
+          <div className="hidden items-center gap-6 lg:flex">
+            <nav className="flex items-center gap-6 text-sm font-semibold text-slate-600">
+              {links.map((link) => (
+                <NavLink 
+                  key={link.to} 
+                  to={link.to} 
+                  className={({ isActive }) => 
+                    `transition-colors hover:text-brand-green ${isActive ? 'text-brand-green' : ''}`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              ))}
+            </nav>
+            {/* Desktop Search */}
+            <form onSubmit={handleSearch} className="flex items-center rounded-full bg-slate-100 px-4 py-2">
+              <Search className="h-4 w-4 text-slate-400" />
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search"
-                className="w-24 border-none bg-transparent text-sm text-brand-dark outline-none"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="ml-2 w-32 bg-transparent text-sm outline-none placeholder:text-slate-400 focus:w-48 transition-all"
               />
-              <button type="submit" className="rounded-full bg-green-700 px-3 py-1 text-xs font-semibold text-white">
-                Go
-              </button>
             </form>
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              className="rounded-full border border-brand-green/40 p-2 text-brand-dark"
-              aria-label="Toggle navigation"
+          </div>
+
+          {/* Mobile Toggle */}
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="rounded-full bg-slate-50 p-2 text-slate-900 lg:hidden"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
+      </header>
+
+      {/* MOBILE FULL-SCREEN MENU OVERLAY (iPhone Style) */}
+      <div 
+        className={`fixed inset-0 z-50 transform bg-white transition-transform duration-300 ease-out lg:hidden ${
+          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex h-full flex-col p-6">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-6">
+            <span className="text-lg font-black text-brand-dark">Menu</span>
+            <button 
+              onClick={() => setIsMenuOpen(false)}
+              className="rounded-full bg-slate-100 p-2 text-slate-500"
             >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <X className="h-6 w-6" />
             </button>
           </div>
-        </div>
 
-        <div
-          className={`mt-4 flex flex-col gap-6 lg:mt-6 lg:flex-row lg:items-center lg:justify-between ${
-            isMenuOpen ? 'flex' : 'hidden lg:flex'
-          }`}
-        >
-          <nav className="flex flex-col gap-3 text-sm font-semibold text-slate-600 lg:flex-row lg:items-center lg:gap-4">
-            {links.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  `rounded-full px-3 py-1 transition-colors ${
-                    isActive ? 'bg-brand-green text-white' : 'hover:bg-brand-light'
-                  }`
-                }
-              >
-                {link.label}
-              </NavLink>
-            ))}
-            
-            {/* Resources Dropdown */}
-            <details className="group relative lg:static">
-              <summary className="cursor-pointer list-none rounded-full px-3 py-1 text-slate-600 transition-colors hover:bg-brand-light">
-                Resources
-              </summary>
-              <div className="mt-2 rounded-2xl border border-brand-green/20 bg-white py-2 text-left shadow-lg lg:absolute lg:right-0 lg:z-50 lg:w-56">
-                {resourceLinks.map((resource) => (
-                  <NavLink
-                    key={resource.to}
-                    to={resource.to}
-                    onClick={handleDropdownClick} // Attached the closer function here
-                    className={({ isActive }) =>
-                      `block px-4 py-2 text-sm ${
-                        isActive ? 'bg-brand-green/10 text-brand-green' : 'text-slate-700 hover:bg-brand-light'
-                      }`
-                    }
-                  >
-                    {resource.label}
-                  </NavLink>
-                ))}
+          <div className="flex-1 overflow-y-auto py-6">
+            <nav className="flex flex-col gap-6 text-lg font-bold text-slate-800">
+              {links.map((link) => (
+                <NavLink key={link.to} to={link.to} className="flex items-center justify-between border-b border-slate-50 pb-4">
+                  {link.label}
+                  <ChevronRight className="h-5 w-5 text-slate-300" />
+                </NavLink>
+              ))}
+              
+              <div className="pt-4">
+                <p className="mb-4 text-xs font-bold uppercase tracking-widest text-brand-green">Resources</p>
+                <div className="flex flex-col gap-4 pl-2">
+                  {resourceLinks.map((link) => (
+                    <NavLink key={link.to} to={link.to} className="text-base font-medium text-slate-600">
+                      {link.label}
+                    </NavLink>
+                  ))}
+                </div>
               </div>
-            </details>
-          </nav>
+            </nav>
+          </div>
 
-          <form
-            onSubmit={handleSearch}
-            className="hidden items-center gap-3 rounded-full border border-brand-green/40 bg-white px-4 py-2 text-sm shadow-sm lg:flex"
-          >
-            <Search className="h-4 w-4 text-brand-green" aria-hidden />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search phone number, keyword..."
-              className="flex-1 border-none bg-transparent text-sm text-brand-dark outline-none"
-            />
-            <button type="submit" className="rounded-full bg-green-700 px-4 py-1 text-white">
-              Go
-            </button>
-          </form>
+          <div className="border-t border-slate-100 pt-6">
+            <form onSubmit={handleSearch} className="flex items-center rounded-2xl bg-slate-100 px-4 py-3">
+              <Search className="h-5 w-5 text-slate-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="ml-3 flex-1 bg-transparent text-base outline-none"
+              />
+            </form>
+          </div>
         </div>
       </div>
-    </header>
+    </>
   );
 };
 

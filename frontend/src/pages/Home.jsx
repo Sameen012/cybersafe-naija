@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ShieldAlert, BookOpen, Activity, Lock, AlertTriangle, ChevronRight } from 'lucide-react';
 import { scamHighlights } from '../data/scamContent.js';
+import BreachCheck from '../components/BreachCheck.jsx'; // RUTHLESS FEATURE
+import PanicButton from '../components/PanicButton.jsx'; // RUTHLESS FEATURE
 
 const stats = [
   { label: 'Scams Reported', value: '1,240+' },
@@ -36,7 +38,10 @@ const Home = () => {
   return (
     <section className="mx-auto flex max-w-6xl flex-col gap-12 pb-12">
       
-      {/* 1. HERO SECTION */}
+      {/* 1. FLOATING PANIC BUTTON (Mobile Emergency) */}
+      <PanicButton />
+
+      {/* 2. HERO SECTION */}
       <div className="relative overflow-hidden rounded-[2.5rem] bg-brand-dark px-6 py-12 text-center text-white shadow-2xl sm:px-12 sm:py-16 md:text-left">
         {/* Abstract background pattern */}
         <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-brand-green/20 blur-3xl"></div>
@@ -85,7 +90,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 2. URGENT RECOVERY CTA (Panic Button) */}
+      {/* 3. URGENT RECOVERY CTA (Panic Banner) */}
       <Link to="/recovery" className="group relative overflow-hidden rounded-3xl border border-red-100 bg-red-50 p-6 shadow-sm transition-all hover:border-red-200 hover:shadow-md">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <div className="flex items-center gap-4">
@@ -103,7 +108,10 @@ const Home = () => {
         </div>
       </Link>
 
-      {/* 3. TOOLBOX GRID */}
+      {/* 4. DARK WEB BREACH SCANNER (New Feature) */}
+      <BreachCheck />
+
+      {/* 5. TOOLBOX GRID */}
       <div>
         <div className="mb-6 flex items-end justify-between">
           <h2 className="text-2xl font-bold text-brand-dark">Defense Tools</h2>
@@ -136,7 +144,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* 4. RECENT PLAYBOOKS (Existing Data) */}
+      {/* 6. RECENT PLAYBOOKS */}
       <div>
         <h2 className="mb-6 text-2xl font-bold text-brand-dark">Recent Intel</h2>
         <div className="grid gap-5 md:grid-cols-3">
