@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Search, BookOpen, X, ArrowUp } from 'lucide-react';
 
-// HUGE DATASET: Over 40 terms to force scrolling and provide deep value
 const dictionaryTerms = [
   {
     term: 'Aza',
