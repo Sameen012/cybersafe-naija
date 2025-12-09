@@ -15,7 +15,7 @@ const sequelize = new Sequelize(
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false // This allows connection to Aiven without downloading their CA certificate manually
+        rejectUnauthorized: false // <--- THIS IS THE KEY TO FIX "ACCESS DENIED"
       }
     }
   }
