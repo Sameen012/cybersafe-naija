@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Search, BookOpen, X, ArrowUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Search, BookOpen, X, ArrowUp, Sparkles } from 'lucide-react';
 
 const dictionaryTerms = [
   {
@@ -12,7 +13,8 @@ const dictionaryTerms = [
   },
   {
     term: 'Billing',
-    definition: 'The phase where a scammer actively demands money from a victim after establishing trust. E.g., "I have started billing the client."'
+    category: 'Formats',
+    definition: 'The critical stage where a scammer actively begins financial extraction from a victim after grooming and establishing trust. E.g., "I have started billing the client."'
   },
   {
     term: 'Bombing',
@@ -181,15 +183,34 @@ const dictionaryTerms = [
 ];
 
 const ScamDictionary = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
+  const [activeCategory, setActiveCategory] = useState('All');
 
-  // FILTER LOGIC: Updates the list automatically as you type
-  const filteredTerms = dictionaryTerms.filter((item) =>
-    item.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.definition.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) setSearchTerm(q);
+  }, [searchParams]);
 
-  const clearSearch = () => setSearchTerm('');
+  const quickFilters = ['All', 'Aza', 'Format', 'OTP', 'POS', 'Hacker', 'Crypto'];
+
+  // FILTER LOGIC
+  const filteredTerms = dictionaryTerms.filter((item) => {
+    const matchesSearch =
+      item.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.definition.toLowerCase().includes(searchTerm.toLowerCase());
+    if (activeCategory === 'All') return matchesSearch;
+    return (
+      matchesSearch &&
+      (item.term.toLowerCase().includes(activeCategory.toLowerCase()) ||
+        item.definition.toLowerCase().includes(activeCategory.toLowerCase()))
+    );
+  });
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    setActiveCategory('All');
+  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -198,30 +219,32 @@ const ScamDictionary = () => {
   return (
     <section className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pb-20">
       
-      {/* HEADER SECTION */}
-      <header className="space-y-4 pt-10 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-green/10 text-brand-green">
+      {/* HEADER SECTION WITH LINEAR GRADIENT */}
+      <header className="space-y-4 pt-6 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 text-emerald-600 shadow-sm">
           <BookOpen className="h-7 w-7" />
         </div>
-        <h1 className="text-4xl font-black text-brand-dark md:text-5xl">Cybercrime Lexicon</h1>
-        <p className="mx-auto max-w-2xl text-lg text-slate-600">
-          The comprehensive A-Z guide to the slang, codes, and formats used by scammers. 
-          <span className="font-semibold text-brand-green"> {dictionaryTerms.length} terms decoded.</span>
+        <h1 className="text-4xl font-black text-slate-900 md:text-5xl">
+          Cybercrime <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 bg-clip-text text-transparent">Lexicon</span>
+        </h1>
+        <p className="mx-auto max-w-2xl text-base sm:text-lg text-slate-600">
+          The comprehensive Nigerian A-Z guide to street slang, format scripts, and financial crime vocabulary.
+          <span className="font-bold text-emerald-700"> {dictionaryTerms.length} terms cataloged.</span>
         </p>
       </header>
 
-      {/* STICKY SEARCH BAR */}
-      <div className="sticky top-4 z-30 mx-auto w-full max-w-xl">
-        <div className="relative group shadow-xl rounded-full bg-white transition-all hover:shadow-2xl">
+      {/* STICKY SEARCH BAR & QUICK FILTERS */}
+      <div className="sticky top-4 z-30 mx-auto w-full max-w-2xl space-y-3">
+        <div className="relative group shadow-xl rounded-full bg-white transition-all hover:shadow-2xl border border-slate-200">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5">
-            <Search className="h-5 w-5 text-slate-400 group-focus-within:text-brand-green" />
+            <Search className="h-5 w-5 text-slate-400 group-focus-within:text-emerald-600" />
           </div>
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search slang (e.g. 'Loader', 'Aza')..."
-            className="block w-full rounded-full border-0 bg-transparent py-4 pl-12 pr-12 text-slate-900 ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-green sm:text-base sm:leading-6"
+            placeholder="Search slang, tactics, or terms (e.g. 'Picker', 'Billing', 'POS')..."
+            className="block w-full rounded-full border-0 bg-transparent py-4 pl-12 pr-12 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 sm:text-base outline-none"
           />
           {searchTerm && (
             <button
@@ -232,6 +255,27 @@ const ScamDictionary = () => {
               <X className="h-5 w-5" />
             </button>
           )}
+        </div>
+
+        {/* Quick Tag Filter Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+          {quickFilters.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => {
+                setActiveCategory(tag);
+                if (tag === 'All') setSearchTerm('');
+                else setSearchTerm(tag);
+              }}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                (activeCategory === tag || searchTerm.toLowerCase() === tag.toLowerCase())
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
         </div>
       </div>
 

@@ -37,23 +37,25 @@ const AdminDashboard = () => {
   return (
     <section className="mx-auto max-w-5xl space-y-8">
       <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.4em] text-brand-green">Control Room</p>
-        <h1 className="text-4xl font-black text-brand-dark">Incoming Reports</h1>
-        <p className="text-sm text-slate-600">Mock data mode — wire to the backend later.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-700">Incident Dispatch</p>
+        <h1 className="text-4xl font-black text-slate-900">
+          Incoming <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Scam Reports</span>
+        </h1>
+        <p className="text-sm text-slate-600">Verified moderator dispatch desk for triaging community-reported scam phone numbers and fake links.</p>
       </header>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <article className="rounded-3xl border border-brand-green/30 bg-white p-6 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.3em] text-brand-green">Pending</p>
-          <p className="mt-2 text-3xl font-black text-brand-dark">{pendingCount}</p>
+        <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Pending Review</p>
+          <p className="mt-2 text-3xl font-black text-slate-900">{pendingCount}</p>
         </article>
-        <article className="rounded-3xl border border-brand-green/30 bg-white p-6 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.3em] text-brand-green">Resolved</p>
-          <p className="mt-2 text-3xl font-black text-brand-dark">{reports.length - pendingCount}</p>
+        <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">Verified & Added to Blocklist</p>
+          <p className="mt-2 text-3xl font-black text-slate-900">{reports.length - pendingCount}</p>
         </article>
-        <article className="rounded-3xl border border-brand-green/30 bg-white p-6 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.3em] text-brand-green">Today&apos;s Alerts</p>
-          <p className="mt-2 text-3xl font-black text-brand-dark">3</p>
+        <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Today's Escalations</p>
+          <p className="mt-2 text-3xl font-black text-slate-900">3</p>
         </article>
       </div>
 

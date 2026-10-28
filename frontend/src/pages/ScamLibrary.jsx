@@ -83,26 +83,33 @@ const ScamLibrary = () => {
   }, []);
 
   if (isLoading) {
-    return <p>Loading library…</p>;
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+        <p className="mt-4 text-xs font-bold uppercase tracking-wider text-slate-500">Loading Scam Intel Playbooks…</p>
+      </div>
+    );
   }
 
   return (
-    <section className="mx-auto max-w-5xl">
-      <header className="mb-6 space-y-2">
-        <h2 className="text-3xl font-bold text-brand-dark">Scam Library</h2>
-        <p className="text-sm text-slate-600">Browse verified playbooks shared by the CyberSafe Naija community.</p>
+    <section className="mx-auto max-w-5xl pb-20">
+      <header className="mb-8 space-y-2">
+        <h2 className="text-3xl font-black text-slate-900 md:text-4xl">
+          Scam Playbook <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Library</span>
+        </h2>
+        <p className="text-sm sm:text-base text-slate-600">Browse verified threat playbooks and incident breakdowns documented for the Nigerian digital ecosystem.</p>
         {isFallback && (
-          <p className="rounded-xl bg-amber-50 px-4 py-2 text-sm text-amber-700">
-            Live data is unavailable, showing trusted examples instead.
+          <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs font-semibold text-amber-800">
+            Offline snapshot mode: Showing trusted core playbooks.
           </p>
         )}
       </header>
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {scams.map((scam) => (
           <article
             key={scam.id}
             tabIndex={0}
-            className="flex cursor-pointer flex-col rounded-2xl border border-brand-green/30 bg-white p-6 shadow transition hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-green"
+            className="flex cursor-pointer flex-col rounded-3xl border border-slate-200 bg-white p-6 sm:p-7 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-emerald-400 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500"
             onClick={() => {
               if ((scam.category && /grant/i.test(scam.category)) || /grant/i.test(scam.title)) {
                 setShowFakeGrantInsight(true);
@@ -117,18 +124,20 @@ const ScamLibrary = () => {
               }
             }}
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand-green">{scam.category}</p>
-            <h3 className="mt-2 text-xl font-bold text-brand-dark">{scam.title}</h3>
-            <p className="mt-2 text-sm text-slate-600">{scam.description || scam.summary}</p>
+            <span className="self-start rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-800">
+              {scam.category}
+            </span>
+            <h3 className="mt-3 text-xl font-bold text-slate-900">{scam.title}</h3>
+            <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">{scam.description || scam.summary}</p>
             {((scam.category && /grant/i.test(scam.category)) || /grant/i.test(scam.title)) && (
-              <p className="mt-3 text-xs font-semibold uppercase tracking-[0.3em] text-brand-green">
-                Tap to read full fake grant breakdown
+              <p className="mt-3 text-xs font-bold text-emerald-700 flex items-center gap-1">
+                <span>Tap to inspect fake grant analysis</span> &rarr;
               </p>
             )}
             {Array.isArray(scam.redFlags) && scam.redFlags.length > 0 && (
-              <div className="mt-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-dark">Red Flags</p>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <div className="mt-4 pt-3 border-t border-slate-100">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-700">Red Flags</p>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-slate-600">
                   {scam.redFlags.map((flag, index) => (
                     <li key={`${scam.id}-flag-${index}`}>{flag}</li>
                   ))}
@@ -136,9 +145,9 @@ const ScamLibrary = () => {
               </div>
             )}
             {scam.preventionTips && (
-              <div className="mt-auto pt-4 text-sm text-brand-dark">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-dark">Prevention Tips</p>
-                <p className="mt-1 leading-relaxed text-slate-700">{scam.preventionTips}</p>
+              <div className="mt-auto pt-4 text-xs">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Defensive Tip</p>
+                <p className="mt-1 leading-relaxed text-slate-600">{scam.preventionTips}</p>
               </div>
             )}
           </article>

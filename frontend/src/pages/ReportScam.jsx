@@ -79,27 +79,29 @@ const ReportScam = () => {
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 pb-20">
-      <div className="mb-8">
-        <h2 className="text-3xl font-black text-brand-dark md:text-4xl">Report a Scam</h2>
-        <p className="mt-2 text-slate-600">
-          Your report helps us build the blacklist. Scammer numbers stay confidential until verified by our ruthless admins.
+      <div className="mb-8 space-y-2">
+        <h2 className="text-3xl font-black text-slate-900 md:text-4xl">
+          Report a <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Scam Incident</span>
+        </h2>
+        <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
+          Your report empowers fellow citizens and alerts investigators. Scammer numbers and links remain confidential until verified by our community intelligence analysts. Zero personal data is made public.
         </p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* LEFT COLUMN: THE FORM */}
-        <form onSubmit={handleSubmit} className="space-y-5 rounded-3xl border border-brand-green/30 bg-white p-6 shadow-lg md:p-8">
+        <form onSubmit={handleSubmit} className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl md:p-8">
           
           {/* Dropdown with Scam Types */}
           <div>
-            <label className="mb-1 block text-sm font-bold text-brand-dark">What type of attack was it?</label>
+            <label className="mb-1 block text-sm font-bold text-slate-900">What type of attack was it?</label>
             <div className="relative">
               <select
                 required
                 name="scamType"
                 value={form.scamType}
                 onChange={handleChange}
-                className="w-full appearance-none rounded-2xl border border-brand-green/40 bg-slate-50 px-4 py-3.5 text-slate-900 outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+                className="w-full appearance-none rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3.5 text-slate-900 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm font-medium"
               >
                 <option value="">Select a category...</option>
                 {Object.keys(SCAM_DEFINITIONS).map((type) => (
@@ -108,42 +110,41 @@ const ReportScam = () => {
                   </option>
                 ))}
               </select>
-              {/* Custom arrow icon could go here */}
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-bold text-brand-dark">Scammer's Phone Number or Link</label>
+            <label className="mb-1 block text-sm font-bold text-slate-900">Scammer's Phone Number, Bank Drop, or Link</label>
             <input
               required
               name="contact"
               value={form.contact}
               onChange={handleChange}
-              className="w-full rounded-2xl border border-brand-green/40 bg-slate-50 px-4 py-3.5 outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
-              placeholder="e.g. 0802 000 1111 or https://bit.ly/fake-grant"
+              className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3.5 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              placeholder="e.g. 0802 000 1111, OPay 801..., or https://bit.ly/fake-grant"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-bold text-brand-dark">What happened?</label>
+            <label className="mb-1 block text-sm font-bold text-slate-900">Incident Details & Evidence</label>
             <textarea
               required
               name="description"
               value={form.description}
               onChange={handleChange}
-              className="w-full rounded-2xl border border-brand-green/40 bg-slate-50 px-4 py-3.5 outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+              className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3.5 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               rows="5"
-              placeholder="Please describe the conversation. Did they ask for a code? Did they promise 2x returns?"
+              placeholder="Describe the conversation. Did they ask for an OTP? Did they demand a 'clearance fee'? What bank account did they provide?"
             />
           </div>
 
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-green py-4 text-center font-bold text-white shadow-md transition-transform hover:-translate-y-1 hover:bg-emerald-700 disabled:opacity-70"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 py-4 text-center font-bold text-white shadow-lg shadow-emerald-600/25 transition-transform hover:-translate-y-0.5 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-70 text-sm"
           >
-            {status === 'loading' ? 'Encrypting & Submitting...' : 'Submit Report'}
-            <ShieldAlert size={20} />
+            {status === 'loading' ? 'Encrypting & Submitting Intel...' : 'Submit Incident Report'}
+            <ShieldAlert size={18} />
           </button>
 
           {status === 'success' && (

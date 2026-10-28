@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, PhoneCall } from 'lucide-react';
 
 const PanicButton = () => {
   return (
     <Link
       to="/recovery"
-      className="fixed bottom-6 right-6 z-40 flex h-14 w-14 animate-pulse items-center justify-center rounded-full bg-red-600 text-white shadow-xl shadow-red-600/30 transition-transform hover:scale-110 active:scale-95 sm:h-auto sm:w-auto sm:rounded-2xl sm:px-6"
+      className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-red-700 px-5 py-3.5 text-white shadow-2xl shadow-red-600/40 transition-transform hover:scale-105 active:scale-95 border border-white/20"
+      title="Freeze Bank Account Instantly via USSD"
     >
-      <AlertTriangle className="h-6 w-6 sm:mr-2" />
-      <span className="hidden font-bold sm:inline">I've Been Scammed</span>
+      <div className="relative flex h-3 w-3">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-80" />
+        <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
+      </div>
+      <AlertTriangle className="h-5 w-5 text-white" />
+      <span className="font-extrabold text-xs sm:text-sm tracking-wide">Emergency Freeze (USSD)</span>
     </Link>
   );
 };

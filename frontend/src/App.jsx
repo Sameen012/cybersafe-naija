@@ -9,10 +9,11 @@ import AdminDashboard from './pages/AdminDashboard.jsx';
 import RecoveryGuide from './pages/RecoveryGuide.jsx';
 import ScamDictionary from './pages/ScamDictionary.jsx';
 import ProtectionChecklist from './pages/ProtectionChecklist.jsx';
+import About from './pages/About.jsx';
 
 const App = () => {
   return (
-    <div className="flex min-h-screen flex-col bg-brand-light text-slate-900">
+    <div className="flex min-h-screen flex-col bg-slate-50/50 text-slate-900 antialiased">
       <Navbar />
       <main className="flex-1 px-4 py-8 sm:px-6 lg:px-10">
         <Routes>
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/recovery" element={<RecoveryGuide />} />
           <Route path="/dictionary" element={<ScamDictionary />} />
           <Route path="/checklist" element={<ProtectionChecklist />} />
+          <Route path="/about" element={<About />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
